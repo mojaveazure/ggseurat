@@ -75,5 +75,5 @@ GetAesthetics <- function(plot, layer, split = TRUE) {
 }
 
 .onAttach <- function(libname, pkgname) {
-  AttachDeps(deps = c('SeuratObject'))
+  AttachDeps(deps = c('SeuratObject', 'ggplot2'))
 }
