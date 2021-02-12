@@ -1,23 +1,33 @@
-Package: SeuratGG
+Package: ggseurat
 Type: Package
-Title: What the Package Does (Title Case)
+Title: ggplot2 Bindings for Seurat Objects
 Version: 0.1.0
-Date: 2019-11-19
+Date: 2021-02-11
 Authors@R: c(
-  person(given = 'Paul', family = 'Hoffman', email = 'phoffman@nygenome.org', role = c('aut', 'cre'), comment = c(ORCID = '    0000-0002-7693-8957'))
+  person(
+    given = 'Paul',
+    family = 'Hoffman',
+    email = 'phoffman@nygenome.org',
+    role = c('aut', 'cre'),
+    comment = c(ORCID = '0000-0002-7693-8957'))
   )
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Description: Provides methods to allow Seurat objects to be utilized directly in
+    the ggplot2 ecosystem.
+URL: https://github.com/mojaveazure/seurat-gg
+BugReports: https://github.com/mojaveazure/seurat-gg/issues
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 7.1.1
 Depends:
     R (>= 3.5.0)
 Imports:
-    ggplot2 (>= 3.0.0),
-    rlang,
-    Seurat (>= 3.1.1)
+    ggplot2 (>= 3.3.3),
+    rlang (>= 0.4.10),
+    SeuratObject (>= 4.0.0)
+Suggests:
+    Seurat
 Collate:
+    'zzz.R'
     'ggplot.R'
     'ggplot2_utils.R'
-RoxygenNote: 6.1.1

@@ -1,3 +1,7 @@
+#' @include zzz.R
+#'
+NULL
+
 #' ggplot2 utility functions
 #'
 #' These functions are internal functions copied from ggplot2 to maintain
@@ -10,28 +14,18 @@
 #' @seealso \code{\link[ggplot2]{ggplot2-package}}
 #' @keywords internal
 #'
-#' @rdname ggplot2-utils
-#' @name ggplot2-utils
+#' @noRd
 #'
 NULL
 
-#' @rdname ggplot2-utils
-#' @name ggplot2-utils
-#'
 create_layout <- function(facet = FacetNull, coord = CoordCartesian) {
   ggproto(NULL, Layout, facet = facet, coord = coord)
 }
 
-#' @rdname ggplot2-utils
-#' @name ggplot2-utils
-#'
 empty <- function(df) {
   is.null(df) || nrow(df) == 0 || ncol(df) == 0
 }
 
-#' @rdname ggplot2-utils
-#' @name ggplot2-utils
-#'
 find_global <- function(name, env, mode = "any") {
   if (exists(name, envir = env, mode = mode)) {
     return(get(name, envir = env, mode = mode))
@@ -43,9 +37,6 @@ find_global <- function(name, env, mode = "any") {
   NULL
 }
 
-#' @rdname ggplot2-utils
-#' @name ggplot2-utils
-#'
 make_labels <- function(mapping) {
   default_label <- function(aesthetic, mapping) {
     if (is.atomic(mapping)) {
@@ -64,23 +55,14 @@ make_labels <- function(mapping) {
   Map(default_label, names(mapping), mapping)
 }
 
-#' @rdname ggplot2-utils
-#' @name ggplot2-utils
-#'
 match_calculated_aes <- "^\\.\\.([a-zA-Z._]+)\\.\\.$"
 
-#' @rdname ggplot2-utils
-#' @name ggplot2-utils
-#'
 message_wrap <- function(...) {
   msg <- paste(..., collapse = "", sep = "")
   wrapped <- strwrap(msg, width = getOption("width") - 2)
   message(paste0(wrapped, collapse = "\n"))
 }
 
-#' @rdname ggplot2-utils
-#' @name ggplot2-utils
-#'
 new_data_frame <- function(x = list(), n = NULL) {
   if (length(x) != 0 && is.null(names(x)))
     stop("Elements must be named", call. = FALSE)
@@ -102,18 +84,13 @@ new_data_frame <- function(x = list(), n = NULL) {
   attr(x, "row.names") <- .set_row_names(n)
   x
 }
-#' @rdname ggplot2-utils
-#' @name ggplot2-utils
-#'
+
 plot_clone <- function(plot) {
   p <- plot
   p$scales <- plot$scales$clone()
   p
 }
 
-#' @rdname ggplot2-utils
-#' @name ggplot2-utils
-#'
 scales_add_missing <- function(plot, aesthetics, env) {
   aesthetics <- setdiff(aesthetics, plot$scales$input())
   for (aes in aesthetics) {
@@ -123,9 +100,6 @@ scales_add_missing <- function(plot, aesthetics, env) {
   }
 }
 
-#' @rdname ggplot2-utils
-#' @name ggplot2-utils
-#'
 ScalesList <- ggproto(
   "ScalesList", NULL,
   scales = NULL,
@@ -172,16 +146,10 @@ ScalesList <- ggproto(
   }
 )
 
-#' @rdname ggplot2-utils
-#' @name ggplot2-utils
-#'
 scales_list <- function() {
   ggproto(NULL, ScalesList)
 }
 
-#' @rdname ggplot2-utils
-#' @name ggplot2-utils
-#'
 scales_map_df <- function(scales, df) {
   if (empty(df) || length(scales$scales) == 0)
     return(df)
@@ -190,18 +158,12 @@ scales_map_df <- function(scales, df) {
   new_data_frame(c(mapped, df[setdiff(names(df), names(mapped))]))
 }
 
-#' @rdname ggplot2-utils
-#' @name ggplot2-utils
-#'
 scales_train_df <- function(scales, df, drop = FALSE) {
   if (empty(df) || length(scales$scales) == 0)
     return()
   lapply(scales$scales, function(scale) scale$train_df(df = df))
 }
 
-#' @rdname ggplot2-utils
-#' @name ggplot2-utils
-#'
 scales_transform_df <- function(scales, df) {
   if (empty(df) || length(scales$scales) == 0)
     return(df)
@@ -210,9 +172,6 @@ scales_transform_df <- function(scales, df) {
   new_data_frame(c(transformed, df[setdiff(names(df), names(transformed))]))
 }
 
-#' @rdname ggplot2-utils
-#' @name ggplot2-utils
-#'
 strip_dots <- function(expr) {
   if (is.atomic(expr)) {
     expr

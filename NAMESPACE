@@ -2,7 +2,7 @@
 
 S3method(ggplot,Seurat)
 S3method(ggplot_build,ggseurat)
-importFrom(Seurat,FetchData)
+importFrom(SeuratObject,FetchData)
 importFrom(ggplot2,CoordCartesian)
 importFrom(ggplot2,FacetNull)
 importFrom(ggplot2,aes)
