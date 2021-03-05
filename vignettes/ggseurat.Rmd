@@ -1,0 +1,57 @@
+---
+title: "Visualizing Seurat Objects with ggplot2"
+output: 
+  rmarkdown::html_vignette:
+    fig_width: 7
+    fig_height: 5
+vignette: >
+  %\VignetteIndexEntry{Visualizing Seurat Objects with ggplot2}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(rlang)
+library(ggseurat)
+library(patchwork)
+data("pbmc_small")
+p <- ggplot(data = pbmc_small) +
+  cowplot::theme_cowplot()
+```
+
+## Dimensional Reduction Plots
+
+```{r dimplot}
+p + geom_point(aes(x = tSNE_1, y = tSNE_2, color = ident))
+```
+
+## Feature Plots
+
+```{r feature_plots}
+# features <- c("LYZ", "CCL5", "IL32", "PTPRCAP", "FCGR3A", "PF4")
+features <- c("LYZ", "CCL5", "IL32", "FCGR3A", "PF4")
+plots <- vector("list", length = length(features))
+for (i in seq_along(plots)) {
+  var <- sym(features[i])
+  plots[[i]] <- p +
+    geom_point(aes(x = tSNE_1, y = tSNE_2, color = !!var)) +
+    scale_color_gradientn(colors = c("lightgrey", "purple"))
+}
+wrap_plots(plots)
+```
+
+```{r facet_feature_plot}
+var <- sym("MS4A1")
+p +
+  geom_point(aes(x = tSNE_1, y = tSNE_2, color = !!var)) +
+  scale_color_gradientn(colors = c("lightgrey", "purple")) +
+  facet_wrap(facets = "groups")
+```
+

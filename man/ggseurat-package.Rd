@@ -12,8 +12,8 @@ Provides methods to allow Seurat objects to be utilized directly in
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/mojaveazure/seurat-gg}
-  \item Report bugs at \url{https://github.com/mojaveazure/seurat-gg/issues}
+  \item \url{https://github.com/mojaveazure/ggseurat}
+  \item Report bugs at \url{https://github.com/mojaveazure/ggseurat/issues}
 }
 
 }

@@ -7,8 +7,8 @@ NULL
 #' These functions are internal functions copied from ggplot2 to maintain
 #' functionality. All credit goes to the ggplot2 authors
 #'
-#' @importFrom ggplot2 FacetNull CoordCartesian ggproto FacetNull
-#' @importFrom rlang is_quosure quo_is_symbol as_string quo_get_expr quo_text
+#' @importFrom ggplot2 CoordCartesian FacetNull ggproto Layout
+#' @importFrom rlang as_string is_quosure quo_get_expr quo_is_symbol quo_text
 #'
 #' @author ggplot2 developers
 #' @seealso \code{\link[ggplot2]{ggplot2-package}}

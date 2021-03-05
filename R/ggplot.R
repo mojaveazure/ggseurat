@@ -21,7 +21,6 @@ ggplot.Seurat <- function(
   ...,
   environment = parent.frame()
 ) {
-  # .NotYetImplemented()
   p <- structure(
     .Data = list(
       data = data,
