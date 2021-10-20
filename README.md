@@ -1,11 +1,11 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# ggseurat v0.0.0.9000
+# ggseurat v0.0.0.9001
 
 <!-- badges: start -->
 
-[![Lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://github.com/mojaveazure/seurat-gg)
+[![Lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://github.com/mojaveazure/ggseurat)
 ![Questioning](https://img.shields.io/badge/lifecycle-questioning-informational)
 [![CRAN/METACRAN](https://img.shields.io/cran/v/ggseurat)](https://cran.r-project.org/package=ggseurat)
 <!-- badges: end -->
@@ -23,5 +23,5 @@ You can install ggseurat from GitHub with:
 if (!requireNamespace('remotes', quietly = TRUE) {
   install.packages('remotes')
 }
-remotes::install_github('mojaveazure/seurat-gg')
+remotes::install_github('mojaveazure/ggseurat')
 ```
