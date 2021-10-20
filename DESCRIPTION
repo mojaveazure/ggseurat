@@ -1,8 +1,8 @@
 Package: ggseurat
 Type: Package
 Title: ggplot2 Bindings for Seurat Objects
-Version: 0.0.0.9000
-Date: 2021-03-05
+Version: 0.0.0.9001
+Date: 2021-10-20
 Authors@R: c(
   person(
     given = 'Paul',
@@ -13,25 +13,27 @@ Authors@R: c(
   )
 Description: Provides methods to allow Seurat objects to be utilized directly in
     the ggplot2 ecosystem.
-URL: https://github.com/mojaveazure/ggseurat
+URL: https://mojaveazure.github.io/ggseurat, https://github.com/mojaveazure/ggseurat
 BugReports: https://github.com/mojaveazure/ggseurat/issues
-License: GPL (>= 3)
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
+Remotes: 
+    mojaveazure/seurat-object@develop
 Depends:
-    R (>= 3.6.0)
+    R (>= 4.0.0)
 Imports:
-    ggplot2 (>= 3.3.3),
-    rlang (>= 0.4.10),
-    SeuratObject (>= 4.0.0)
+    ggplot2 (>= 3.3.5),
+    rlang (>= 0.4.12),
+    SeuratObject (>= 4.0.2.9000)
 Suggests:
-    cowplot,
-    knitr,
-    patchwork,
-    rmarkdown
+    cowplot (>= 1.1.1),
+    knitr (>= 1.36),
+    patchwork (>= 1.1.1),
+    rmarkdown (>= 2.11)
 Enhances:
-    Seurat
+    Seurat (>= 4.0.0)
 Collate:
     'zzz.R'
     'ggplot.R'

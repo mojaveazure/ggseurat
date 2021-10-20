@@ -2,28 +2,9 @@
 #'
 "_PACKAGE"
 
-#' Attach Required Packages
-#'
-#' Helper function to attach required packages. Detects if a package is already
-#' attached and if so, skips it. Should be called in \code{\link[base]{.onAttach}}
-#'
-#' @param deps A character vector of packages to attach
-#'
-#' @return Invisibly returns \code{NULL}
-#'
-#' @keywords internal
-#'
-#' @noRd
-#'
-AttachDeps <- function(deps) {
-  for (d in deps) {
-    if (!paste0('package:', d) %in% search()) {
-      packageStartupMessage("Attaching ", d)
-      attachNamespace(ns = d)
-    }
-  }
-  return(invisible(x = NULL))
-}
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# Internal
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 #' Get aesthetics from a layer
 #'
@@ -74,6 +55,13 @@ GetAesthetics <- function(plot, layer, split = TRUE) {
   return(aesthetics)
 }
 
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# Hooks
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+#' @importFrom SeuratObject AttachDeps
+#'
 .onAttach <- function(libname, pkgname) {
   AttachDeps(deps = c('SeuratObject', 'ggplot2'))
+  return(invisible(x = NULL))
 }

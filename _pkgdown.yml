@@ -3,3 +3,6 @@ destination: docs
 template:
   params:
     bootswatch: flatly
+
+development:
+  mode: auto

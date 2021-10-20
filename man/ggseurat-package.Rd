@@ -6,12 +6,12 @@
 \alias{ggseurat-package}
 \title{ggseurat: ggplot2 Bindings for Seurat Objects}
 \description{
-Provides methods to allow Seurat objects to be utilized directly in
-    the ggplot2 ecosystem.
+Provides methods to allow Seurat objects to be utilized directly in the ggplot2 ecosystem.
 }
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://mojaveazure.github.io/ggseurat}
   \item \url{https://github.com/mojaveazure/ggseurat}
   \item Report bugs at \url{https://github.com/mojaveazure/ggseurat/issues}
 }
