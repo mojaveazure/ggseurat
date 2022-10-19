@@ -7,7 +7,7 @@ Authors@R: c(
   person(
     given = 'Paul',
     family = 'Hoffman',
-    email = 'phoffman@nygenome.org',
+    email = 'hoff0792@umn.edu',
     role = c('aut', 'cre'),
     comment = c(ORCID = '0000-0002-7693-8957'))
   )
@@ -18,8 +18,6 @@ BugReports: https://github.com/mojaveazure/ggseurat/issues
 License: MIT + file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.2.1
-Remotes: 
-    mojaveazure/seurat-object@develop
 Depends:
     ggplot2 (>= 3.3.5),
     R (>= 4.0.0),
