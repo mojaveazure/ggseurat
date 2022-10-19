@@ -60,7 +60,7 @@ stage <- if (pkg.version >= package_version(x = "1.0.0")) {
 color <- c("experimental" = "orange", "maturing" = "blue", "stable" = "brightgreen")[stage]
 ```
 
-# `r pkg` v`r pkg.version`
+# `r pkg` <!-- v`r pkg.version` -->
 
 <!-- badges: start -->
 [![Lifecycle](https://img.shields.io/badge/lifecycle-`r stage`-`r color`.svg)](`r github.url`)

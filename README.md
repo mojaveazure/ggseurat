@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# ggseurat v0.0.0.9001
+# ggseurat <!-- v0.0.0.9002 -->
 
 <!-- badges: start -->
 
