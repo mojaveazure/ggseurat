@@ -1,8 +1,8 @@
 Package: ggseurat
 Type: Package
 Title: ggplot2 Bindings for Seurat Objects
-Version: 0.0.0.9001
-Date: 2021-10-20
+Version: 0.0.0.9002
+Date: 2022-10-19
 Authors@R: c(
   person(
     given = 'Paul',
@@ -11,22 +11,25 @@ Authors@R: c(
     role = c('aut', 'cre'),
     comment = c(ORCID = '0000-0002-7693-8957'))
   )
-Description: Provides methods to allow Seurat objects to be utilized directly in
-    the ggplot2 ecosystem.
+Description: Provides methods to allow Seurat objects to be utilized directly 
+  in the ggplot2 ecosystem.
 URL: https://mojaveazure.github.io/ggseurat, https://github.com/mojaveazure/ggseurat
 BugReports: https://github.com/mojaveazure/ggseurat/issues
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 Remotes: 
     mojaveazure/seurat-object@develop
 Depends:
-    R (>= 4.0.0)
-Imports:
     ggplot2 (>= 3.3.5),
+    R (>= 4.0.0),
+    SeuratObject (>= 4.1.0)
+Imports:
+    Matrix (>= 1.4.1),
+    methods,
     rlang (>= 0.4.12),
-    SeuratObject (>= 4.0.2.9000)
+    stats,
+    utils
 Suggests:
     cowplot (>= 1.1.1),
     knitr (>= 1.36),
@@ -34,8 +37,16 @@ Suggests:
     rmarkdown (>= 2.11)
 Enhances:
     Seurat (>= 4.0.0)
-Collate:
+VignetteBuilder: knitr
+Collate: 
     'zzz.R'
+    'assay.R'
+    'centroids.R'
+    'dimreduc.R'
+    'fov.R'
     'ggplot.R'
     'ggplot2_utils.R'
-VignetteBuilder: knitr
+    'molecules.R'
+    'roxygen.R'
+    'segmentation.R'
+    'seurat.R'

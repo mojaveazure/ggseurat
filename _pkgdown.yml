@@ -6,3 +6,14 @@ template:
 
 development:
   mode: auto
+
+reference:
+  - title: Assay Expression Data
+    contents:
+      - has_concept("assay")
+  - title: Dimensional Reductions
+    contents:
+      - has_concept("dimreduc")
+  - title: Unsorted
+    contents:
+      - lacks_concepts(c("dimreduc", "assay"))

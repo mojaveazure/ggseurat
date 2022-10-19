@@ -21,3 +21,4 @@ Useful links:
 \strong{Maintainer}: Paul Hoffman \email{phoffman@nygenome.org} (\href{https://orcid.org/0000-0002-7693-8957}{ORCID})
 
 }
+\keyword{package}

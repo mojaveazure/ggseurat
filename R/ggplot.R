@@ -5,6 +5,7 @@ NULL
 #' Visualize Seurat objects
 #'
 #' @inheritParams ggplot2::ggplot
+#' @param data A \code{\link[SeuratObject]{Seurat}} object
 #'
 #' @return A ggplot object
 #'
@@ -43,6 +44,8 @@ ggplot.Seurat <- function(
 #'
 #' @inheritParams ggplot2::ggplot_build
 #'
+# @inherit ggplot2::ggplot_build
+#'
 #' @return A built ggplot ready for viewing
 #'
 #' @aliases ggplot_build
@@ -54,6 +57,7 @@ ggplot.Seurat <- function(
 #' @export
 #' @method ggplot_build ggseurat
 #'
+#'
 ggplot_build.ggseurat <- function(plot) {
   plot <- plot_clone(plot = plot)
   if (length(x = plot$layers) == 0) {
@@ -63,7 +67,7 @@ ggplot_build.ggseurat <- function(plot) {
   layer.data <- lapply(
     X = layers,
     FUN = function(l) {
-      plot.data <- unique(x = GetAesthetics(plot = plot, layer = l)$plot)
+      plot.data <- unique(x = .get_aesthetics(plot = plot, layer = l)$plot)
       plot.data <- FetchData(object = plot$data, vars = plot.data)
       return(l$layer_data(plot.data))
     }
@@ -122,4 +126,34 @@ ggplot_build.ggseurat <- function(plot) {
     ),
     class = 'ggplot_built'
   ))
+}
+
+ggplot_build.ggseurat3 <- function(plot) {
+  plot$scales <- plot$scales$clone()
+  if (!length(x = plot$layers)) {
+    plot <- plot + geom_blank()
+  }
+  browser()
+  layer.data <- lapply(
+    X = plot$layers,
+    FUN = function(l) {
+      plot.data <- unique(x = .get_aesthetics(plot = plot, layer = l)$plot)
+      plot.data <- FetchData(object = plot$data, vars = plot.data)
+      return(l$layer_data(plot.data))
+    }
+  )
+  layout <- ggplot2::ggproto(
+    `_class` = NULL,
+    `_inherit` = ggplot2::Layout,
+    facet = plot$facet,
+    coord = plot$coordinates
+  )
+  layout.facets <- as.character(x = layout$facet$params$facets)
+  layout.facets <- gsub(pattern = '^~', replacement = '', x = layout.facets)
+  layout.data <- if (length(x = layout.facets)) {
+    FetchData(object = plot$data, vars = layout.facets)
+  } else {
+    data.frame()
+  }
+  browser()
 }
