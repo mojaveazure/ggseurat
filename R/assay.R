@@ -1,9 +1,3 @@
-#' @include zzz.R
-#' @importFrom Matrix t
-#' @importFrom ggplot2 geom_violin
-#' @importFrom SeuratObject GetAssayData VariableFeatures
-#'
-NULL
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # Methods for ggplot2-defined generics
@@ -46,7 +40,7 @@ autolayer.Assay <- function(
 ) {
   .NotYetImplemented()
   # Generate the data frame
-  coords <- fortify(
+  coords <- ggplot2::fortify(
     model = object,
     data = data,
     features = features,
@@ -66,9 +60,9 @@ autolayer.Assay <- function(
   #   dims = dims
   # )
   # Return the layer
-  return(geom_violin(
+  return(ggplot2::geom_violin(
     # Use aes_string because ggplot2 sucks
-    mapping = aes_string(x = ''),
+    mapping = ggplot2::aes_string(x = ''),
     data = coords,
     show.legend = show.legend,
     ...
@@ -105,14 +99,14 @@ autoplot.Assay <- function(
   ...
 ) {
   .NotYetImplemented()
-  coords <- fortify(model = object, data = data, na.rm = na.rm)
+  coords <- ggplot2::fortify(model = object, data = data, na.rm = na.rm)
   # TODO: Identify the fill
   # TODO: Identify the group
   return(
-    ggplot(
+    ggplot2::ggplot(
       data = coords,
-      mapping = aes_string()
-    ) + geom_violin(show.legend = show.legend, ...)
+      mapping = ggplot2::aes_string()
+    ) + ggplot2::geom_violin(show.legend = show.legend, ...)
   )
 }
 
@@ -169,18 +163,24 @@ fortify.Assay <- function(
   na.rm = FALSE,
   ...
 ) {
-  layer <- arg_match(arg = layer)
+  layer <- rlang::arg_match(
+    arg = layer,
+    values = SeuratObject::Layers(object = model
+  ))
   # Check features
-  orig <- features <- features %||% VariableFeatures(object = model)
+  orig <- features <- features %||%
+    SeuratObject::VariableFeatures(object = model)
   if (!length(x = features)) {
-    orig <- features <- head(x = rownames(x = model), n = 10L)
+    orig <- features <- utils::head(x = rownames(x = model), n = 10L)
   }
-  df <- t(x = GetAssayData(object = model, slot = layer))
+  # df <- SeuratObject::t(x = SeuratObject::GetAssayData(object = model, slot = layer))
+  df <- SeuratObject::t(x = SeuratObject::LayerData(object = model, layer = layer))
   features <- intersect(x = features, y = colnames(x = df))
   if (!length(x = features)) {
-    abort(message = "None of the requested features found")
-  } else if (length(x = features) != length(x = orig)) {
-    warn(message = paste('missing features'))
+    rlang::abort(message = "None of the requested features found")
+  }
+  if (length(x = features) != length(x = orig)) {
+    rlang::warn(message = paste('missing features'))
   }
   # Pull the expression data for the features requested
   df <- df[, features, drop = FALSE]
@@ -191,7 +191,7 @@ fortify.Assay <- function(
   # Add cell information
   df$cell <- row.names(x = df)
   # Add associated meta data
-  if (is_missing(x = data)) {
+  if (rlang::is_missing(x = data)) {
     data <- NULL
   }
   data <- .prep_plot_data(

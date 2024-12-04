@@ -18,7 +18,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Paul Hoffman \email{phoffman@nygenome.org} (\href{https://orcid.org/0000-0002-7693-8957}{ORCID})
+\strong{Maintainer}: Paul Hoffman \email{hoff0792@alumni.umn.edu} (\href{https://orcid.org/0000-0002-7693-8957}{ORCID})
 
 }
 \keyword{package}

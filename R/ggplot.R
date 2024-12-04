@@ -1,6 +1,3 @@
-#' @include zzz.R
-#'
-NULL
 
 #' Visualize Seurat objects
 #'
@@ -12,7 +9,6 @@ NULL
 #' @aliases ggplot
 #' @seealso \code{\link[ggplot2]{ggplot}}
 #'
-#' @importFrom ggplot2 ggplot aes coord_cartesian facet_null set_last_plot
 #' @export
 #' @method ggplot Seurat
 #'
@@ -26,17 +22,19 @@ ggplot.Seurat <- function(
     .Data = list(
       data = data,
       layers = list(),
-      scales = scales_list(),
+      scales = .GG$scales_list(),
+      guides = .GG$guides_list(),
       mapping = mapping,
       theme = list(),
-      coordinates = coord_cartesian(default = TRUE),
-      facet = facet_null(),
-      plot_env = environment
+      coordinates = ggplot2::coord_cartesian(default = TRUE),
+      facet = ggplot2::facet_null(),
+      plot_env = environment,
+      layout = ggplot2::ggproto(`_class` = NULL, `_inherit` = ggplot2::Layout)
     ),
     class = c('gg', 'ggseurat', 'ggplot')
   )
-  p$labels <- make_labels(mapping = mapping)
-  set_last_plot(value = p)
+  p$labels <- .GG$make_labels(mapping = mapping)
+  ggplot2::set_last_plot(value = p)
   return(p)
 }
 
@@ -51,94 +49,57 @@ ggplot.Seurat <- function(
 #' @aliases ggplot_build
 #' @seealso \code{\link[ggplot2]{ggplot_build}}
 #'
-#' @importFrom SeuratObject FetchData
-#' @importFrom ggplot2 ggplot_build geom_blank
-#'
 #' @export
 #' @method ggplot_build ggseurat
 #'
-#'
 ggplot_build.ggseurat <- function(plot) {
-  plot <- plot_clone(plot = plot)
-  if (length(x = plot$layers) == 0) {
-    plot <- plot + geom_blank()
+  plot <- .GG$plot_clone(plot = plot)
+  if (!length(x = plot$layers)) {
+    plot <- plot + ggplot2::geom_blank()
   }
-  layers <- plot$layers
-  layer.data <- lapply(
-    X = layers,
-    FUN = function(l) {
-      plot.data <- unique(x = .get_aesthetics(plot = plot, layer = l)$plot)
-      plot.data <- FetchData(object = plot$data, vars = plot.data)
-      return(l$layer_data(plot.data))
+  facets <- NULL
+  if (!inherits(x = plot$facet, what = 'FacetNull')) {
+    facets <- names(x = plot$facet$params$facets)
+  }
+  # data <- vector(mode = 'list', length = length(x = plot$layers))
+  # for (i in seq_along(along.with = data)) {
+  #   vars <- unique(x = .get_aesthetics(plot = plot, layer = plot$layers[[i]], split = FALSE))
+  #   data[[i]] <- SeuratObject::FetchData(object = plot$data, vars = vars)
+  # }
+  # data <- Reduce(
+  #   f = \(x, y) merge(x = x, y = y, all = TRUE, sort = FALSE, suffixes = character(length = 2L)),
+  #   x = data
+  # )
+  # plot$data <- data
+  # return(NextMethod(generic = 'ggplot_build', object = plot))
+  for (i in seq_along(along.with = plot$layers)) {
+    vars <- unique(x = .get_aesthetics(
+      plot = plot,
+      layer = plot$layers[[i]],
+      split = FALSE
+    ))
+    if (length(x = vars) || length(x = facets)) {
+      plot$layers[[i]]$data <- plot$layers[[i]]$layer_data(SeuratObject::FetchData(
+        object = plot$data,
+        vars = c(vars, facets)
+      ))
     }
-  )
-  scales <- plot$scales
-  ByLayer <- function(f) {
-    out <- vector(mode = "list", length = length(x = data))
-    for (i in seq_along(along.with = data)) {
-      out[[i]] <- f(l = layers[[i]], d = data[[i]])
-    }
-    return(out)
   }
-  data <- layer.data
-  data <- ByLayer(f = function(l, d) l$setup_layer(d, plot))
-  layout <- create_layout(facet = plot$facet, coord = plot$coordinates)
-  layout.facets <- as.character(x = layout$facet$params$facets)
-  layout.facets <- gsub(pattern = '^~', replacement = '', x = layout.facets)
-  layout.data <- if (length(x = layout.facets) > 0) {
-    FetchData(object = plot$data, vars = layout.facets)
-  } else {
-    data.frame()
-  }
-  data <- layout$setup(data, layout.data, plot$plot_env)
-  data <- ByLayer(f = function(l, d) l$compute_aesthetics(d, plot))
-  data <- lapply(X = data, FUN = scales_transform_df, scales = scales)
-  ScaleX <- function() {
-    return(scales$get_scales("x"))
-  }
-  ScaleY <- function() {
-    return(scales$get_scales("y"))
-  }
-  layout$train_position(data, ScaleX(), ScaleY())
-  data <- layout$map_position(data)
-  data <- ByLayer(f = function(l, d) l$compute_statistic(d, layout))
-  data <- ByLayer(f = function(l, d) l$map_statistic(d, plot))
-  scales_add_missing(plot = plot, aesthetics = c("x", "y"), env = plot$plot_env)
-  data <- ByLayer(f = function(l, d) l$compute_geom_1(d))
-  data <- ByLayer(f = function(l, d) l$compute_position(d, layout))
-  layout$reset_scales()
-  layout$train_position(data, ScaleX(), ScaleY())
-  layout$setup_panel_params()
-  data <- layout$map_position(data)
-  npscales <- scales$non_position_scales()
-  if (npscales$n() > 0) {
-    lapply(data, scales_train_df, scales = npscales)
-    data <- lapply(data, scales_map_df, scales = npscales)
-  }
-  data <- ByLayer(f = function(l, d) l$compute_geom_2(d))
-  data <- ByLayer(f = function(l, d) l$finish_statistics(d))
-  data <- layout$finish_data(data)
-  return(structure(
-    .Data = list(
-      data = data,
-      layout = layout,
-      plot = plot
-    ),
-    class = 'ggplot_built'
-  ))
+  plot$data <- ggplot2::waiver()
+  return(NextMethod(generic = 'ggplot_build', object = plot))
 }
 
-ggplot_build.ggseurat3 <- function(plot) {
+ggplot_build_ggseurat3 <- function(plot) {
   plot$scales <- plot$scales$clone()
   if (!length(x = plot$layers)) {
-    plot <- plot + geom_blank()
+    plot <- plot + ggplot2::geom_blank()
   }
   browser()
   layer.data <- lapply(
     X = plot$layers,
     FUN = function(l) {
       plot.data <- unique(x = .get_aesthetics(plot = plot, layer = l)$plot)
-      plot.data <- FetchData(object = plot$data, vars = plot.data)
+      plot.data <- SeuratObject::FetchData(object = plot$data, vars = plot.data)
       return(l$layer_data(plot.data))
     }
   )
@@ -151,7 +112,7 @@ ggplot_build.ggseurat3 <- function(plot) {
   layout.facets <- as.character(x = layout$facet$params$facets)
   layout.facets <- gsub(pattern = '^~', replacement = '', x = layout.facets)
   layout.data <- if (length(x = layout.facets)) {
-    FetchData(object = plot$data, vars = layout.facets)
+    SeuratObject::FetchData(object = plot$data, vars = layout.facets)
   } else {
     data.frame()
   }

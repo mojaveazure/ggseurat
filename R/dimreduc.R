@@ -1,7 +1,3 @@
-#' @include zzz.R
-#' @importFrom SeuratObject Embeddings
-#'
-NULL
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # Methods for ggplot2-defined generics
@@ -45,23 +41,23 @@ autolayer.DimReduc <- function(
   ...
 ) {
   # Generate the data frame
-  coords <- fortify(model = object, data = data, na.rm = na.rm)
+  coords <- ggplot2::fortify(model = object, data = data, na.rm = na.rm)
   # Identify the dimensions
   dims <- .prep_dims(
     dims = dims,
     cols = names(x = coords),
-    key = Key(object = object)
+    key = SeuratObject::Key(object = object)
   )
   # Identify the coloring
   color <- .prep_color(
     cols = names(x = coords),
-    data_missing = is_missing(x = data),
+    data_missing = rlang::is_missing(x = data),
     dims = dims
   )
   # Return the layer
-  return(geom_point(
+  return(ggplot2::geom_point(
     # Use aes_string because ggplot2 sucks
-    mapping = aes_string(x = dims[1L], y = dims[2L], color = color),
+    mapping = ggplot2::aes_string(x = dims[1L], y = dims[2L], color = color),
     data = coords,
     show.legend = show.legend,
     ...
@@ -100,24 +96,24 @@ autoplot.DimReduc <- function(
   ...
 ) {
   # Generate the data frame
-  coords <- fortify(model = object, data = data, na.rm = na.rm)
+  coords <- ggplot2::fortify(model = object, data = data, na.rm = na.rm)
   # Identify the dimensions
   dims <- .prep_dims(
     dims = dims,
     cols = names(x = coords),
-    key = Key(object = object)
+    key = SeuratObject::Key(object = object)
   )
   # Identify the coloring
   color <- .prep_color(
     cols = names(x = coords),
-    data_missing = is_missing(x = data),
+    data_missing = rlang::is_missing(x = data),
     dims = dims
   )
   return(
-    ggplot(
+    ggplot2::ggplot(
       data = coords,
-      mapping = aes_string(x = dims[1L], y = dims[2L], color = color)
-    ) + geom_point(show.legend = show.legend, ...)
+      mapping = ggplot2::aes_string(x = dims[1L], y = dims[2L], color = color)
+    ) + ggplot2::geom_point(show.legend = show.legend, ...)
   )
 }
 
@@ -165,12 +161,12 @@ autoplot.DimReduc <- function(
 #'
 fortify.DimReduc <- function(model, data, na.rm = FALSE, ...) {
   # Pull the embeddings matrix
-  df <- as.data.frame(x = Embeddings(object = model))
+  df <- as.data.frame(x = SeuratObject::Embeddings(object = model))
   # Add cell information
   df$cell <- row.names(x = df)
   df <- df[, c('cell', setdiff(x = names(x = df), y = 'cell')), drop = FALSE]
   # Add associated meta data
-  if (is_missing(x = data)) {
+  if (rlang::is_missing(x = data)) {
     data <- NULL
   }
   data <- .prep_plot_data(
@@ -199,15 +195,15 @@ fortify.DimReduc <- function(model, data, na.rm = FALSE, ...) {
 
 .prep_dims <- function(dims, cols, key) {
   # Check dimensions
-  if (!(is_bare_integerish(x = dims, n = 2L, finite = TRUE) && all(dims > 0))) {
-    abort(
+  if (!(rlang::is_bare_integerish(x = dims, n = 2L, finite = TRUE) && all(dims > 0))) {
+    rlang::abort(
       message = "'dims' must be a vector of two positive integers",
-      call = caller_env()
+      call = rlang::caller_env()
     )
   }
-  dims <- paste0(Key(object = key, quiet = TRUE), dims)
+  dims <- paste0(SeuratObject::Key(object = key, quiet = TRUE), dims)
   if (!all(dims %in% cols)) {
-    abort(message = "Unable to find dimensions requested", call = caller_env())
+    rlang::abort(message = "Unable to find dimensions requested", call = rlang::caller_env())
   }
   return(dims)
 }

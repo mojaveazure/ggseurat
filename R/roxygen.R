@@ -1,6 +1,3 @@
-#' @include zzz.R
-#'
-NULL
 
 #' Rdocumentation Default Identity
 #'
@@ -20,13 +17,7 @@ NULL
 #'
 #' @template example-rd-inject
 #'
-.rd_ident <- function() {
-  return(paste0(
-    '\\dQuote{\\code{',
-    getOption(x = 'Seurat.object.project', default = 'SeuratProject'),
-    '}}'
-  ))
-}
+.rd_ident <- \() sprintf(fmt = '\\dQuote{\\code{%s}}', .project())
 
 #' Rdocumentation Itemized List
 #'
@@ -44,11 +35,7 @@ NULL
 #'
 #' @template example-rd-inject
 #'
-.rd_ilist <- function(x) {
-  return(paste(
-    "\\itemize{",
-    paste0(' \\item \\dQuote{\\code{', x, "}}", collapse = '\n'),
-    "}",
-    sep = '\n'
-  ))
-}
+.rd_ilist <- \(x) sprintf(
+  fmt = '\\itemize{\n%s\n}',
+  paste0(' \\item \\dQuote{\\code{', x, '}}', collapse = '\n')
+)

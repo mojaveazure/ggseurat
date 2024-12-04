@@ -22,14 +22,14 @@ library(rlang)
 library(ggseurat)
 library(patchwork)
 data("pbmc_small")
-p <- ggplot(data = pbmc_small) +
+p <- ggplot(data = pbmc_small, mapping = aes(x = tSNE_1, y = tSNE_2)) +
   cowplot::theme_cowplot()
 ```
 
 ## Dimensional Reduction Plots
 
 ```{r dimplot}
-p + geom_point(aes(x = tSNE_1, y = tSNE_2, color = ident))
+p + geom_point(aes(color = ident))
 ```
 
 ## Feature Plots
@@ -41,7 +41,7 @@ plots <- vector("list", length = length(features))
 for (i in seq_along(plots)) {
   var <- sym(features[i])
   plots[[i]] <- p +
-    geom_point(aes(x = tSNE_1, y = tSNE_2, color = !!var)) +
+    geom_point(aes(color = !!var)) +
     scale_color_gradientn(colors = c("lightgrey", "purple"))
 }
 wrap_plots(plots)
@@ -50,7 +50,7 @@ wrap_plots(plots)
 ```{r facet_feature_plot}
 var <- sym("MS4A1")
 p +
-  geom_point(aes(x = tSNE_1, y = tSNE_2, color = !!var)) +
+  geom_point(aes(color = !!var)) +
   scale_color_gradientn(colors = c("lightgrey", "purple")) +
   facet_wrap(facets = "groups")
 ```

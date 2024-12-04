@@ -1,6 +1,3 @@
-#' @include zzz.R
-#'
-NULL
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # Methods for ggplot2-defined generics
@@ -20,23 +17,23 @@ autoplot.FOV <- function(
   seed = NA,
   ...
 ) {
-  which <- which %||% DefaultBoundary(object = object)
-  molecules <- Features(x = object) %iff% molecules
-  if (!is_na(x = which) && which == 'molecules' && is.null(x = molecules)) {
-    abort(message = "No molecules present, please plot a segmentation")
+  which <- which %||% SeuratObject::DefaultBoundary(object = object)
+  molecules <- SeuratObject::Features(x = object) %iff% molecules
+  if (!rlang::is_na(x = which) && which == 'molecules' && is.null(x = molecules)) {
+    rlang::abort(message = "No molecules present, please plot a segmentation")
   }
-  plot <- ggplot() +
-    theme(
-      axis.line = element_blank(),
-      axis.text = element_blank(),
-      axis.ticks = element_blank(),
-      axis.title = element_blank(),
-      panel.background = element_blank()
+  plot <- ggplot2::ggplot() +
+    ggplot2::theme(
+      axis.line = ggplot2::element_blank(),
+      axis.text = ggplot2::element_blank(),
+      axis.ticks = ggplot2::element_blank(),
+      axis.title = ggplot2::element_blank(),
+      panel.background = ggplot2::element_blank()
     )
 
   # Add centroids/segmentations
-  if (!is_na(x = which)) {
-    plot <- plot + autolayer(
+  if (!rlang::is_na(x = which)) {
+    plot <- plot + ggplot2::autolayer(
       object = object[[which]],
       data = data,
       alpha = alpha,
@@ -45,14 +42,14 @@ autoplot.FOV <- function(
   }
   # Add molecules
   if (!is.null(x = molecules)) {
-    plot <- plot + autolayer(
+    plot <- plot + ggplot2::autolayer(
       object = object[['molecules']],
       feature = molecules,
       nmols = nmols,
       seed = seed,
       size = pt.size
     ) +
-      guides(color = guide_legend(override.aes = list(size = 1.5)))
+      ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(size = 1.5)))
   }
   return(plot)
 }

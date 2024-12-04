@@ -1,7 +1,3 @@
-#' @include zzz.R
-#' @importFrom ggplot2 geom_polygon
-#'
-NULL
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # Methods for ggplot2-defined generics
@@ -19,8 +15,8 @@ autolayer.Segmentation <- function(
   ...
 ) {
   # Create data frame with coordinates and extra plotting data
-  rnd <- RandomName()
-  coords <- fortify(model = object, data = data, name = fill %||% rnd)
+  rnd <- SeuratObject::RandomName()
+  coords <- ggplot2::fortify(model = object, data = data, name = fill %||% rnd)
   # Attempt to find data to fill polygons by
   fill <- fill %||% setdiff(x = colnames(x = coords), y = c('x', 'y', 'cell'))
   fill <- fill[1L]
@@ -34,12 +30,12 @@ autolayer.Segmentation <- function(
     coords <- coords[!is.na(x = coords[[fill]]), , drop = FALSE]
   }
   # Do not show a legend when filling by cells
-  if (is.na(x = show.legend) && isTRUE(x = fill) == 'cell') {
+  if (is.na(x = show.legend) && isTRUE(x = fill == 'cell')) {
     show.legend <- FALSE
   }
   # Build the layer
-  return(geom_polygon(
-    mapping = aes_string(x = 'y', y = 'x', group = 'cell', fill = fill),
+  return(ggplot2::geom_polygon(
+    mapping = ggplot2::aes_string(x = 'y', y = 'x', group = 'cell', fill = fill),
     data = coords,
     show.legend = show.legend,
     ...
@@ -50,7 +46,7 @@ autolayer.Segmentation <- function(
 #' @export
 #'
 fortify.Segmentation <- function(model, data, ...) {
-  df <- GetTissueCoordinates(object = model, full = TRUE)
+  df <- SeuratObject::GetTissueCoordinates(object = model, full = TRUE)
   if (missing(x = data)) {
     data <- NULL
   }

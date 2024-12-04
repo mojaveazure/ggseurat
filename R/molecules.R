@@ -1,6 +1,3 @@
-#' @include zzz.R
-#'
-NULL
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # Methods for ggplot2-defined generics
@@ -18,17 +15,23 @@ autolayer.Molecules <- function(
   seed = NA_integer_,
   ...
 ) {
-  coords <- fortify(model = object, data = feature, nmols = nmols, seed = seed)
+  coords <- ggplot2::fortify(
+    model = object,
+    data = feature,
+    nmols = nmols,
+    seed = seed
+  )
   if (isTRUE(x = na.rm)) {
-    coords <- na.omit(object = coords)
+    coords <- stats::na.omit(object = coords)
   }
-  return(geom_point(
-    mapping = aes_string(x = 'y', y = 'x', color = 'molecule'),
+  return(ggplot2::geom_point(
+    mapping = ggplot2::aes_string(x = 'y', y = 'x', color = 'molecule'),
     data = coords,
     show.legend = show.legend,
     ...
   ))
 }
+
 #' @method fortify Molecules
 #' @export
 #'
@@ -39,7 +42,7 @@ fortify.Molecules <- function(
   seed = NA_integer_,
   ...
 ) {
-  coords <- GetTissueCoordinates(object = model, features = data)
+  coords <- SeuratObject::GetTissueCoordinates(object = model, features = data)
   if (!is.null(x = nmols)) {
     if (!is.na(x = seed)) {
       set.seed(seed = seed)

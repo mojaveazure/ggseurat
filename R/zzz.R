@@ -1,31 +1,7 @@
-#' @importFrom utils head
-#' @importFrom stats na.omit
-#' @importFrom SeuratObject %||% %iff%
-#' Cells
-#' DefaultBoundary
-#' Features
-#' GetTissueCoordinates
-#' Key
-#' RandomName
-#' @importFrom ggplot2 aes aes_string
-#' autolayer
-#' autoplot
-#' element_blank
-#' fortify
-#' geom_point
-#' ggplot
-#' guides
-#' guide_legend
-#' theme
-#' @importFrom rlang abort
-#' arg_match
-#' caller_env
-#' inform
-#' is_bare_integerish
-#' is_missing
-#' is_na
-#' missing_arg
-#' warn
+#' @importFrom rlang missing_arg
+#' @importFrom SeuratObject %iff%
+#' @importFrom ggplot2 %+replace% aes autolayer autoplot fortify
+#' ggplot ggplot_build
 #'
 NULL
 
@@ -34,6 +10,18 @@ NULL
 #' @keywords package
 #'
 "_PACKAGE"
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# ggplot2 Helpers
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+.GG <- sapply(
+  X = c('create_layout', 'make_labels', 'plot_clone', 'guides_list', 'scales_list'),
+  FUN = get,
+  envir = getNamespace(name = 'ggplot2'),
+  simplify = FALSE,
+  USE.NAMES = TRUE
+)
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # Generics
@@ -58,7 +46,7 @@ NULL
 #'
 .prep_plot_data <- function(data, idx, ...) {
   if (!inherits(x = idx, what = 'rle')) {
-    abort("'idx' must be an 'rle' object")
+    rlang::abort("'idx' must be an 'rle' object")
   }
   UseMethod(generic = '.prep_plot_data', object = data)
 }
@@ -81,7 +69,7 @@ NULL
 .prep_plot_data.data.frame <- function(data, idx, ...) {
   nn <- names(x = data)
   if (is.null(x = nn) || !all(nzchar(x = nn))) {
-    abort(message = "All values of 'data' must be named")
+    rlang::abort(message = "All values of 'data' must be named")
   }
   data <- sapply(
     X = nn,
@@ -99,19 +87,17 @@ NULL
 #' @param name Name for resulting \code{\link[base]{data.frame}}
 #' @param restricted A vector of names that \code{name} should not be
 #'
-#' @importFrom rlang is_bare_atomic
-#'
 #' @rdname dot-prep_plot_data
 #' @method .prep_plot_data default
 #' @export
 #'
 .prep_plot_data.default <- function(data, idx, name, restricted = 'cell', ...) {
-  if (!(is_bare_atomic(x = data) || is.factor(x = data))) {
-    abort("'data' must be an atomic vector or a factor")
+  if (!(rlang::is_bare_atomic(x = data) || is.factor(x = data))) {
+    rlang::abort("'data' must be an atomic vector or a factor")
   }
   name <- as.character(x = name)
   if (name %in% restricted) {
-    abort(message = paste("'name' cannot be", .oxford(restricted)))
+    rlang::abort(message = paste("'name' cannot be", .oxford(restricted)))
   }
   nn <- idx$values
   if (is.null(x = names(x = data))) {
@@ -120,18 +106,18 @@ NULL
   }
   if (anyDuplicated(x = names(x = data))) {
     ndup <- sum(duplicated(x = names(x = data)))
-    warn(message = paste(
+    rlang::warn(message = paste(
       ndup,
       ifelse(test = ndup == 1L, yes = "entry", no = "entries"),
       "duplicated, using only the first occrance"
     ))
   }
   if (!length(x = intersect(x = names(x = data), y = nn))) {
-    abort("None of the entries provided are in the index")
+    rlang::abort("None of the entries provided are in the index")
   }
   miss <- setdiff(x = nn, y = names(x = data))
   if (length(x = miss)) {
-    warn(message = paste(
+    rlang::warn(message = paste(
       length(x = miss),
       "entries missing from provided data, filling with 'NA'"
     ))
@@ -139,7 +125,7 @@ NULL
   }
   extra <- setdiff(x = names(x = data), y = nn)
   if (length(x = extra)) {
-    warn(message = paste(length(x = extra), "extra entries provided, removing"))
+    rlang::warn(message = paste(length(x = extra), "extra entries provided, removing"))
   }
   data <- data.frame(rep.int(x = data[nn], times = idx$lengths))
   names(x = data) <- name
@@ -183,13 +169,11 @@ NULL
 #'
 .fortify <- function(df, ident = TRUE, na.rm = FALSE) {
   if (!'cell' %in% names(x = df)) {
-    abort(message = "No cell identifier in data frame")
+    rlang::abort(message = "No cell identifier in data frame")
   }
   init <- if (isTRUE(x = ident)) {
     if (!'ident' %in% names(x = df)) {
-      df$ident <- factor(
-        x = getOption(x = 'Seurat.object.project', default = 'SeuratProject')
-      )
+      df$ident <- factor(x = .project())
     }
     c('cell', 'ident')
   } else {
@@ -198,7 +182,7 @@ NULL
   df <- df[, c(init, setdiff(x = names(x = df), y = init)), drop = FALSE]
   row.names(x = df) <- NULL
   if (isTRUE(x = na.rm)) {
-    df <- na.omit(object = df)
+    df <- stats::na.omit(object = df)
   }
   return(df)
 }
@@ -226,9 +210,9 @@ NULL
 #'
 .get_aesthetics <- function(plot, layer, split = TRUE) {
   if (!inherits(x = plot, what = 'ggplot')) {
-    abort(message = "'plot' must be a ggplot object")
+    rlang::abort(message = "'plot' must be a ggplot object")
   } else if (!inherits(x = layer, what = 'Layer')) {
-    abort(message = "'layer' must be a ggplot layer")
+    rlang::abort(message = "'layer' must be a ggplot layer")
   }
   l.map <- layer$mapping
   p.map <- plot$mapping
@@ -293,8 +277,8 @@ NULL
   quote = c('single', 'fancysingle', 'double', 'fancydouble', 'none')
 ) {
   x <- as.character(x = c(...))
-  cnj <- arg_match(arg = cnj)
-  quote <- arg_match(arg = quote)
+  cnj <- rlang::arg_match(arg = cnj)
+  quote <- rlang::arg_match(arg = quote)
   x <- switch(
     EXPR = quote,
     single = sQuote(x = x, q = FALSE),
@@ -315,6 +299,18 @@ NULL
   ))
 }
 
+.project <- function() {
+  x <- getOption(x = 'Seurat.object.project', default = 'SeuratProject')
+  if (!is.character(x = x) || length(x = x) != 1L || !nzchar(x = x) || is.na(x = x)) {
+    rlang::abort(message = "'Seurat.object.project' must be a single, non-empty string")
+  }
+  return(x)
+}
+
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # Hooks
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+.onLoad <- function(libname, pkgname) {
+  backports::import(pkgname = pkgname, obj = '%||%')
+}
